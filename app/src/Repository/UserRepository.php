@@ -5,10 +5,12 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,10 +21,12 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     private $passwordHasher;
+    private $validator;
 
-    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator)
     {
         $this->passwordHasher = $passwordHasher;
+        $this->validator      = $validator;
 
         parent::__construct($registry, User::class);
     }
@@ -51,8 +55,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                  $userData['password']
              ));
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->validateUser($user);
+
+        try {
+            $this->_em->persist($user);
+            $this->_em->flush();
+        } catch (Exception $e) {
+            // We don't want to show actual SQL errors.
+            throw new Exception('There was an error while creating your user');
+        }
+    }
+
+    public function validateUser(User $user)
+    {
+        $errors = $this->validator->validate($user);
+
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $error) {
+                $messages[] = $error->getMessage();
+            }
+            throw new Exception(implode('. ', $messages));
+        }
     }
 
     // /**
