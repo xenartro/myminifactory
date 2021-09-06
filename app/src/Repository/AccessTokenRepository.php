@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\AccessToken;
+use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,37 +16,58 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AccessTokenRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $tokenTTL;
+
+    public function __construct(ManagerRegistry $registry, string $tokenTTL)
     {
+        $this->tokenTTL = $tokenTTL;
+
         parent::__construct($registry, AccessToken::class);
     }
 
-    // /**
-    //  * @return AccessToken[] Returns an array of AccessToken objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getTokenForUser(User $user)
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findByUser($user) ?? $this->generateTokenForUser($user);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?AccessToken
+    private function generateTokenForUser(User $user)
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->cleanUpUserToken($user);
+
+        $token = new AccessToken();
+        $token->setUser($user);
+        $token->setCreatedAt(new DateTimeImmutable("now"));
+        $token->setToken($this->createTokenString($user));
+
+        $this->_em->persist($token);
+        $this->_em->flush();
+
+        return $token;
     }
-    */
+
+    private function createTokenString(User $user)
+    {
+        return sha1($user->getId().random_bytes(12));
+    }
+
+    private function cleanUpUserToken($user)
+    {
+        $this->createQueryBuilder('a')
+            ->andWhere('a.user_id = :user_id')
+            ->setParameter('user_id', $user->getId())
+            ->delete();
+    }
+
+    private function findByUser(User $user): ?AccessToken
+    {
+        $expirationDate = new DateTimeImmutable("-{$this->tokenTTL} minutes");
+
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.user_id = :user_id')
+            ->andWhere('a.created_at < :created_at')
+            ->setParameter('user_id', $user->getId())
+            ->setParameter('created_at', $expirationDate)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

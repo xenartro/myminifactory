@@ -33,8 +33,8 @@ class AccessToken
     private $created_at;
 
     /**
-     * @OneToOne(targetEntity="User")
-     * @JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
@@ -75,6 +75,13 @@ class AccessToken
     public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function setUser(User $user)
+    {
+        $this->user = $user;
 
         return $this;
     }
