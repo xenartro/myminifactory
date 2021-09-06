@@ -11,11 +11,10 @@ class DefaultController extends AbstractController
     /**
      * @Route("/", name="default")
      * @Route("/register", name="register", methods={"GET"})
-     * @Route("/login", name="register", methods={"GET"})
+     * @Route("/app", name="register", methods={"GET"})
      */
     public function indexAction()
     {
         return $this->render('index.html.twig');
-
     }
 }

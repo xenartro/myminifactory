@@ -79,4 +79,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             throw new Exception(implode('. ', $messages));
         }
     }
+
+    public function getUserList()
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.username')
+            ->getQuery()
+            ->getResult();
+    }
 }

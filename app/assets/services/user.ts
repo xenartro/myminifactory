@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 export function getToken() {
   return sessionStorage.getItem('access_token');
@@ -48,4 +48,31 @@ export async function login(username: string, password: string) {
 
     throw new Error('Unexpected error')
   }
+}
+
+export interface UserListDataInterface {
+  username: string;
+}
+
+export async function getRegisteredUsers() {
+  try {
+    const response: AxiosResponse<{ data: UserListDataInterface[] }> = await axios({
+      method: 'get',
+      url: '/app/users',
+      headers: {
+        'X-AUTH-TOKEN': getToken()
+      }
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (e instanceof Error && (e as AxiosError).response?.status === 401) {
+      setToken('');
+      // TODO: something more elegant than this. This should be more than enough
+      // for a comprehensive reader.
+      window.location.replace('/');
+    }
+  }
+
+  return [];
 }
