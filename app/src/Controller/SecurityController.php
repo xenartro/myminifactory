@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Repository\AccessTokenRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,11 +10,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends AbstractController
 {
-    private $UserRepository;
+    private $accessTokenRepository;
+    private $userRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(AccessTokenRepository $accessTokenRepository, UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->accessTokenRepository = $accessTokenRepository;
+        $this->userRepository        = $userRepository;
     }
 
     /**
@@ -23,10 +26,13 @@ class SecurityController extends AbstractController
     {
         $user = $this->getUser();
 
-        return $this->json([
-            'username' => $user->getUserIdentifier(),
-            'roles' => $user->getRoles(),
-        ]);
+        return $this->json(
+            [ 'success' => true, ],
+            200,
+            [
+                'X-AUTH-TOKEN' => $this->accessTokenRepository->getTokenForUser($user)->getToken(),
+            ]
+        );
     }
 
     /**
