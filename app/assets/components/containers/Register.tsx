@@ -3,7 +3,7 @@ import { ChangeEvent, FC, useState, SyntheticEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { register } from '../../services/user';
 
-const Index: FC = () => {
+const Register: FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -72,4 +72,4 @@ const Index: FC = () => {
   )
 }
 
-export default Index;
+export default Register;
