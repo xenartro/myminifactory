@@ -47,7 +47,7 @@ class AccessTokenRepository extends ServiceEntityRepository
 
     private function createTokenString(User $user)
     {
-        return sha1($user->getId().random_bytes(12));
+        return sha1(str_pad($user->getId(), 11, '0', STR_PAD_LEFT).random_bytes(12));
     }
 
     private function cleanUpUserToken($user)
