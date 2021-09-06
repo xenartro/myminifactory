@@ -41,6 +41,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $password;
 
+    /**
+     * @Assert\NotBlank(message="Please provide a password")
+     */
+    private $rawPassword;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +107,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getRawPassword(): string
+    {
+        return $this->rawPassword;
+    }
+
+    public function setRawPassword(string $password): self
+    {
+        $this->rawPassword = $password;
+
+        return $this;
+    }
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -127,6 +144,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function isPasswordSafe()
     {
-        return strlen($this->password) < 8 || $this->password === $this->username;
+        return strlen($this->rawPassword) >= 8 && $this->rawPassword !== $this->username;
     }
 }

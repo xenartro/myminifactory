@@ -4,8 +4,9 @@ namespace App\Controller;
 use App\Repository\AccessTokenRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends AbstractController
@@ -49,7 +50,7 @@ class SecurityController extends AbstractController
             return $this->json([
                 'success' => false,
                 'error'   => $e->getMessage(),
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json([

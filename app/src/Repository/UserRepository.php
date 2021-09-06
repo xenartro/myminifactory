@@ -50,6 +50,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user = new User();
         $user
             ->setUsername($userData['username'])
+            ->setRawPassword($userData['password'])
             ->setPassword($this->passwordHasher->hashPassword(
                  $user,
                  $userData['password']

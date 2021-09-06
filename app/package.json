@@ -4,6 +4,7 @@
         "@symfony/webpack-encore": "^1.0.0",
         "@tsconfig/recommended": "^1.0.1",
         "@types/react-dom": "^17.0.9",
+        "@types/react-router-dom": "^5.1.8",
         "core-js": "^3.0.0",
         "regenerator-runtime": "^0.13.2",
         "ts-loader": "^9.2.5",

@@ -10,6 +10,8 @@ class DefaultController extends AbstractController
 {
     /**
      * @Route("/", name="default")
+     * @Route("/register", name="register")
+     * @Route("/login", name="register")
      */
     public function indexAction()
     {
