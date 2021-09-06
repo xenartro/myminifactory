@@ -15,14 +15,14 @@
 
 ## Steps to run
 
-- Build and start the containers: `docker-compose up -d --build`
-- Install frontend dependencies: `yarn install` or `npm install`
+- Build and start the containers: `docker-compose up -d --build` in the root folder.
+- Install frontend dependencies: `yarn install` or `npm install` in the `app/` folder.
 - Create the database and run the migrations:
   - `docker-compose exec php bash`
   - `php bin/console doctrine:database:create`
   - `php bin/console doctrine:migrations:migrate`
-- Start the frontend application: `yarn encore dev`
-- Add `myminifactory.local` to your hosts files poiting to 127.0.0.1
+- Start the frontend application: `yarn encore dev` in the `app/` folder.
+- Add `myminifactory.local` to your hosts files pointing to 127.0.0.1
 - Open a browser in http://myminifactory.local:8080/
 
 ## Not implemented but nice to haves
