@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends AbstractController
@@ -34,6 +35,14 @@ class SecurityController extends AbstractController
                 'X-AUTH-TOKEN' => $this->accessTokenRepository->getTokenForUser($user)->getToken(),
             ]
         );
+    }
+
+    /**
+     * @Route("/logout", name="logout")
+     */
+    public function logout(): RedirectResponse
+    {
+        return new RedirectResponse('/');
     }
 
     /**
