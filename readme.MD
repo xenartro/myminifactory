@@ -31,3 +31,17 @@
 - php-cs-fixer to format PHP files.
 - PHP unit tests.
 - React unit tests with React Testing Library.
+
+## Application resiliency to traffic
+
+> The application should be resilient to large amounts of traffic at very specific hours of the
+day. This should be taken into account when writing the configuration files.
+
+There is no configuration that I know that handles that in Symfony out-of-the-box.
+Also, application performance improvements are usually handled after experiencing
+them (see: early optimization) or point to specific issues (e.g. a given API endpoint
+  or service).
+
+One strategy could be to install and configure a [rate limiter](https://symfony.com/doc/current/rate_limiter.html).
+Other strategies could involve a service like CloudFlare or using a cache layer
+to retrieve frequently used data.
